@@ -1,5 +1,5 @@
 {
-    "version": "0.9.1",
+    "version": "0.10.0",
     "description": "Chat, mail and AI services in one window",
     "homepage": "https://github.com/marsderp/scoop-bucket",
     "license": "Proprietary",
@@ -9,8 +9,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://nidi.marsdoo.com/v0.9.1/Nidi_0.9.1_x64_en-US.msi#/dl.msi_",
-            "hash": "d846ba404b616f160bf97e2a16d41e965ae6fd2029d5a171aeb8a626f9fc97b2"
+            "url": "https://nidi.marsdoo.com/v0.10.0/Nidi_0.10.0_x64_en-US.msi#/dl.msi_",
+            "hash": "96ab3a0a2820a138f1a204b2e4724a3c7782b15e5f626b6042105461587c0244"
         }
     },
     "installer": {
