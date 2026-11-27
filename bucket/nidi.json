@@ -1,0 +1,44 @@
+{
+    "version": "0.9.1",
+    "description": "Chat, mail and AI services in one window",
+    "homepage": "https://github.com/marsderp/scoop-bucket",
+    "license": "Proprietary",
+    "notes": [
+        "Nidi is installed with its own .msi into Program Files and updates itself from inside the app.",
+        "Windows asks once for administrator permission during install and uninstall."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://nidi.marsdoo.com/v0.9.1/Nidi_0.9.1_x64_en-US.msi#/dl.msi_",
+            "hash": "d846ba404b616f160bf97e2a16d41e965ae6fd2029d5a171aeb8a626f9fc97b2"
+        }
+    },
+    "installer": {
+        "script": [
+            "Copy-Item \"$dir\\dl.msi_\" \"$dir\\Nidi.msi\"",
+            "$p = Start-Process msiexec.exe -ArgumentList '/i', \"`\"$dir\\Nidi.msi`\"\", '/passive', '/norestart' -Wait -PassThru",
+            "if ($p.ExitCode -notin 0, 3010) { throw \"Nidi installer failed with exit code $($p.ExitCode)\" }"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$keys = 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*', 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*'",
+            "$app = Get-ItemProperty $keys -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq 'Nidi' -and $_.PSChildName -match '^\\{' } | Select-Object -First 1",
+            "if ($app) {",
+            "    $p = Start-Process msiexec.exe -ArgumentList '/x', $app.PSChildName, '/passive', '/norestart' -Wait -PassThru",
+            "    if ($p.ExitCode -notin 0, 1605, 3010) { throw \"Nidi uninstaller failed with exit code $($p.ExitCode)\" }",
+            "} else { Write-Host 'Nidi is not installed in Windows, nothing to remove.' }"
+        ]
+    },
+    "checkver": {
+        "url": "https://nidi.marsdoo.com/latest.json",
+        "jsonpath": "$.version"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://nidi.marsdoo.com/v$version/Nidi_$version_x64_en-US.msi#/dl.msi_"
+            }
+        }
+    }
+}
