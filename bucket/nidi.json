@@ -13,6 +13,22 @@
             "hash": "2d8985a0ee831378648e77e46a96c624ce63290fc334a835350a71b388e6b6c6"
         }
     },
+    "pre_install": [
+        "# Quit a running Nidi the normal way first, so its services save their logins",
+        "# (Discord keeps its token in memory until the page closes). The installer would",
+        "# otherwise close Nidi without that step. Needs Nidi 0.16.0+ for --quit.",
+        "$nidi = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.Path -and $_.Path -like \"$env:ProgramFiles\\Nidi\\*.exe\" })",
+        "if ($nidi.Count -gt 0) {",
+        "    $exe = $nidi[0].Path",
+        "    try { $v = [version]((Get-Item $exe).VersionInfo.ProductVersion -replace '[^0-9.].*$', '') } catch { $v = [version]'0.0' }",
+        "    if ($v -ge [version]'0.16.0') {",
+        "        Write-Host 'Quitting Nidi so its services can save their logins...'",
+        "        Start-Process $exe -ArgumentList '--quit' -Wait",
+        "        $nidi | Wait-Process -Timeout 30 -ErrorAction SilentlyContinue",
+        "        if (Get-Process -Id $nidi.Id -ErrorAction SilentlyContinue) { Write-Host 'Nidi did not quit within 30 seconds; the installer will close it.' }",
+        "    } else { Write-Host 'Quit Nidi from its tray icon before updating, or services may ask you to log in again.' }",
+        "}"
+    ],
     "installer": {
         "script": [
             "Copy-Item \"$dir\\dl.msi_\" \"$dir\\Nidi.msi\"",
@@ -20,6 +36,22 @@
             "if ($p.ExitCode -notin 0, 3010) { throw \"Nidi installer failed with exit code $($p.ExitCode)\" }"
         ]
     },
+    "pre_uninstall": [
+        "# Quit a running Nidi the normal way first, so its services save their logins",
+        "# (Discord keeps its token in memory until the page closes). The installer would",
+        "# otherwise close Nidi without that step. Needs Nidi 0.16.0+ for --quit.",
+        "$nidi = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.Path -and $_.Path -like \"$env:ProgramFiles\\Nidi\\*.exe\" })",
+        "if ($nidi.Count -gt 0) {",
+        "    $exe = $nidi[0].Path",
+        "    try { $v = [version]((Get-Item $exe).VersionInfo.ProductVersion -replace '[^0-9.].*$', '') } catch { $v = [version]'0.0' }",
+        "    if ($v -ge [version]'0.16.0') {",
+        "        Write-Host 'Quitting Nidi so its services can save their logins...'",
+        "        Start-Process $exe -ArgumentList '--quit' -Wait",
+        "        $nidi | Wait-Process -Timeout 30 -ErrorAction SilentlyContinue",
+        "        if (Get-Process -Id $nidi.Id -ErrorAction SilentlyContinue) { Write-Host 'Nidi did not quit within 30 seconds; the installer will close it.' }",
+        "    } else { Write-Host 'Quit Nidi from its tray icon before updating, or services may ask you to log in again.' }",
+        "}"
+    ],
     "uninstaller": {
         "script": [
             "$keys = 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*', 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*'",

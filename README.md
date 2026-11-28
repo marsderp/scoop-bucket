@@ -33,6 +33,8 @@ Windows asks once for administrator permission, because Nidi installs into Progr
 
 Nidi updates itself. When a new version is out, an arrow button appears in the sidebar. Click it, then Install, and Nidi restarts on the new version.
 
+If you update with `scoop update nidi` while Nidi is open, Scoop asks Nidi to quit first (Nidi 0.16.0 or later), so services such as Discord keep their logins.
+
 ## Uninstall
 
 Remove the app but keep your services, logins and settings:
